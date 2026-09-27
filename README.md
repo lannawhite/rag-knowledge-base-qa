@@ -17,8 +17,6 @@
    └──────────────────────── ④ 大模型"开卷考试"，生成有依据的回答
 ```
 
-**和课程代码的关系**：老师 `llm/pre_training.py` 里 `AutoModel/AutoTokenizer` 加载 BERT 的写法，和本项目 `SentenceTransformer` 加载嵌入模型是同一族接口；你垃圾短信项目手写的 `Word2Sequence`（分词→序列）对应 RAG 里的"文本→向量"，只是换成了预训练模型。
-
 ---
 
 ## 二、环境准备（约 20 分钟）
@@ -64,7 +62,7 @@ python app.py
 ```
 
 **验证流程**（用自带的示例文档练手）：
-1. 上传 `sample_knowledge.txt`（就是你的简历内容）→ 点「构建知识库」
+1. 上传 `sample_knowledge.txt`→ 点「构建知识库」
 2. 问：`这个人掌握哪些深度学习框架？` → 应答：PyTorch、TensorFlow/Keras
 3. 问：`他实习时用什么模型做量化？` → 应答：RKNN 工具链、FP16/INT8
 4. 问一个知识库里没有的（如`北京今天天气如何`）→ 应答"知识库中没有找到相关信息"——**这一步一定要演示，这是 RAG 防幻觉的核心卖点**
@@ -81,31 +79,10 @@ python app.py
 | `TOP_K` | app.py 顶部 | 召回块数（3） | 提供给模型更多依据，但可能引入噪音 |
 | `temperature` | call_llm 里 | 生成随机度（0.1） | 越低越严谨，RAG 场景要低 |
 
-## 五、传到 GitHub（衔接你刚学的仓库整理）
 
-```bash
-cd D:\rag-kb-qa
-git init
-git add .
-git commit -m "RAG 知识库问答系统：bge-small-zh + FAISS + GLM-4-Flash + Gradio"
-# 在 github.com 上 New repository（名字建议 rag-knowledge-base-qa），然后：
-git remote add origin https://github.com/lannawhite/rag-knowledge-base-qa.git
-git branch -M main
-git push -u origin main
-```
+## 五、常见坑
 
-推送前把 `API_KEY` 确认还是从环境变量读的（本项目默认就是，不写死 Key，安全）。可以再加一个 `README` 截图和一段 GIF 演示，仓库质量会高一档。
-
-## 六、写进简历的一句话
-
-> **基于 RAG 的本地知识库问答系统**（个人项目）
-> 构建文档切分与向量化检索流程（bge-small-zh + FAISS），接入 GLM 大模型 API 实现检索增强问答，设计"原文依据展示"环节抑制模型幻觉，使用 Gradio 提供 Web 交互界面，已开源至 GitHub。
-
-**面试话术**：能讲清"为什么切块要重叠"（防止语义被切断）、"为什么归一化后用内积"（等价余弦相似度）、"怎么防幻觉"（限定只用检索内容作答 + 展示原文依据）、"和微调的区别"（RAG 改知识不改模型，零训练成本、知识可实时更新）。
-
-## 七、常见坑
-
-- **模型下载慢/失败**：确认 `HF_ENDPOINT` 在运行前已设置；或手动从 hf-mirror.com 下载 `BAAI/bge-small-zh-v1.5` 整个文件夹放到本地，把代码里模型名改成路径（和老师代码里 `path="C:\\bert\\bert-base-chinese"` 同款用法）
+- **模型下载慢/失败**：确认 `HF_ENDPOINT` 在运行前已设置；或手动从 hf-mirror.com 下载 `BAAI/bge-small-zh-v1.5` 整个文件夹放到本地，把代码里模型名改成路径
 - **zhipuai 报错**：`pip install zhipuai --upgrade`；Key 报错就检查环境变量是否真的设置（`echo %ZHIPU_API_KEY%`）
 - **PDF 提取出乱码/空**：扫描版 PDF 没有文字层，换文字版 PDF 或 txt
 - **faiss 装不上**：确认 python 3.10，用 `pip install faiss-cpu` 而不是 faiss
