@@ -1,0 +1,16 @@
+# 私密文件 —— 绝不上传
+api_key.txt
+.env
+
+# 模型权重（95MB，太大不适合放 Git；README 里有下载说明）
+bge-small-zh-v1.5/
+
+# Python 运行产物
+__pycache__/
+*.pyc
+
+# IDE / Gradio 运行缓存
+.idea/
+.vscode/
+gradio_flagged/
+.gradio/
